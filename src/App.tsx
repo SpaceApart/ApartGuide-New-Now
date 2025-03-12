@@ -21,9 +21,11 @@ const EmailLogsPage = React.lazy(() => import("./pages/admin/email-logs"));
 
 function App() {
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <AuthProvider>
-        <RoleProvider>
+    <AuthProvider>
+      <RoleProvider>
+        {/* Tempo routes */}
+        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
+        <Suspense fallback={<p>Loading...</p>}>
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth/login" element={<LoginPage />} />
@@ -49,6 +51,11 @@ function App() {
             />
             <Route path="/auth/callback" element={<AuthCallback />} />
 
+            {/* Add this before the catchall route if you have one */}
+            {import.meta.env.VITE_TEMPO === "true" && (
+              <Route path="/tempobook/*" />
+            )}
+
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Home />} />
@@ -60,11 +67,10 @@ function App() {
               <Route path="/admin/email-logs" element={<EmailLogsPage />} />
             </Route>
           </Routes>
-          {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
-          <Toaster />
-        </RoleProvider>
-      </AuthProvider>
-    </Suspense>
+        </Suspense>
+        <Toaster />
+      </RoleProvider>
+    </AuthProvider>
   );
 }
 
