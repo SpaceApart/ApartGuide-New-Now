@@ -5,7 +5,7 @@ import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 
 // Import the dev tools and initialize them
-import { TempoDevtools } from "tempo-devtools";
+import { TempoDevtools } from "tempo-devtools/dist/index";
 TempoDevtools.init();
 
 const basename = import.meta.env.BASE_URL;
