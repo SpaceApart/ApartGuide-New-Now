@@ -21,50 +21,69 @@ const EmailLogsPage = React.lazy(() => import("./pages/admin/email-logs"));
 
 function App() {
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <AuthProvider>
-        <RoleProvider>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/auth/login" element={<LoginPage />} />
-            <Route path="/auth/register" element={<RegisterPage />} />
+    <AuthProvider>
+      <RoleProvider>
+        {/* Tempo routes */}
+        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth/login" element={<LoginPage />} />
+          <Route path="/auth/register" element={<RegisterPage />} />
+          <Route
+            path="/auth/forgot-password"
+            element={<ForgotPasswordPage />}
+          />
+          <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/auth/set-password" element={<ResetPasswordPage />} />
+          <Route
+            path="/auth/invitation"
+            element={
+              <Suspense fallback={<p>Loading...</p>}>
+                {React.createElement(
+                  React.lazy(() => import("./pages/auth/invitation")),
+                )}
+              </Suspense>
+            }
+          />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+
+          {/* Add this before the catchall route if you have one */}
+          {import.meta.env.VITE_TEMPO === "true" && (
+            <Route path="/tempobook/*" element={<div />} />
+          )}
+
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Home />} />
             <Route
-              path="/auth/forgot-password"
-              element={<ForgotPasswordPage />}
-            />
-            <Route
-              path="/auth/reset-password"
-              element={<ResetPasswordPage />}
-            />
-            <Route path="/auth/set-password" element={<ResetPasswordPage />} />
-            <Route
-              path="/auth/invitation"
+              path="/team"
               element={
                 <Suspense fallback={<p>Loading...</p>}>
-                  {React.createElement(
-                    React.lazy(() => import("./pages/auth/invitation")),
-                  )}
+                  <TeamPage />
                 </Suspense>
               }
             />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-
-            {/* Protected routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<Home />} />
-              <Route path="/team" element={<TeamPage />} />
-              <Route
-                path="/admin/email-templates"
-                element={<EmailTemplatesPage />}
-              />
-              <Route path="/admin/email-logs" element={<EmailLogsPage />} />
-            </Route>
-          </Routes>
-          {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
-          <Toaster />
-        </RoleProvider>
-      </AuthProvider>
-    </Suspense>
+            <Route
+              path="/admin/email-templates"
+              element={
+                <Suspense fallback={<p>Loading...</p>}>
+                  <EmailTemplatesPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/admin/email-logs"
+              element={
+                <Suspense fallback={<p>Loading...</p>}>
+                  <EmailLogsPage />
+                </Suspense>
+              }
+            />
+          </Route>
+        </Routes>
+        <Toaster />
+      </RoleProvider>
+    </AuthProvider>
   );
 }
 
